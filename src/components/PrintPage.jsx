@@ -44,7 +44,7 @@ export default function PrintPage() {
 				window.JsBarcode(`#bc-${i}`, text, {
 					format: "CODE128",
 					lineColor: "#000",
-					width: 1.5,
+					width: 1.2,
 					height: 60,
 					displayValue: true,
 					fontSize: 13,
