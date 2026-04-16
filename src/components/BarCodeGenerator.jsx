@@ -99,6 +99,7 @@ export default function BarcodeGenerator() {
 		);
 	};
 
+	const RESOLUTION_SCALE = 3; // Aumentamos la resolución para que se vea mejor en Word
 	const svgToPng = (text) =>
 		new Promise((resolve) => {
 			const el = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -108,11 +109,12 @@ export default function BarcodeGenerator() {
 				window.JsBarcode(el, text, {
 					format: "CODE128",
 					lineColor: "#000000",
-					width: 2.2,
-					height: 90,
+					// 👇 Escalamos los parámetros del código de barras
+					width: 2.2 * RESOLUTION_SCALE,
+					height: 100 * RESOLUTION_SCALE,
 					displayValue: true,
-					fontSize: 13,
-					margin: 12,
+					fontSize: 16 * RESOLUTION_SCALE,
+					margin: 10 * RESOLUTION_SCALE,
 					background: "#ffffff",
 				});
 			} catch {
@@ -125,15 +127,44 @@ export default function BarcodeGenerator() {
 			const blob = new Blob([svgData], { type: "image/svg+xml" });
 			const url = URL.createObjectURL(blob);
 			const img = new Image();
+
 			img.onload = () => {
 				const canvas = document.createElement("canvas");
-				canvas.width = img.width || 420;
-				canvas.height = img.height || 130;
+				// 👇 El lienzo ya es grande porque JsBarcode generó un SVG grande
+				canvas.width = img.width;
+				// Agregamos espacio escalado para el título
+				canvas.height = img.height + 40 * RESOLUTION_SCALE;
 				const ctx = canvas.getContext("2d");
+
+				// 1. Fondo blanco
 				ctx.fillStyle = "#ffffff";
 				ctx.fillRect(0, 0, canvas.width, canvas.height);
-				ctx.drawImage(img, 0, 0);
+
+				// 2. Dibujar el TEXTO del título arriba (Centrado y Escalado)
+				ctx.fillStyle = "#000000";
+				// 👇 Escalamos el tamaño de fuente
+				ctx.font = `bold ${18 * RESOLUTION_SCALE}px Courier New`;
+				ctx.textAlign = "center";
+				// 👇 Escalamos la posición vertical
+				ctx.fillText(text, canvas.width / 2, 35 * RESOLUTION_SCALE);
+
+				// 3. Dibujar el código de barras debajo del texto (Posición Escalada)
+				// El img ya es grande, así que solo lo posicionamos
+				ctx.drawImage(img, 0, 45 * RESOLUTION_SCALE);
+
+				// 4. Dibujar el MARCO PUNTEADO rodeando TODO (Grosor y Guiones Escalados)
+				ctx.strokeStyle = "#94a3b8";
+				ctx.lineWidth = 2 * RESOLUTION_SCALE; // Línea más gruesa en la imagen grande
+				ctx.setLineDash([6 * RESOLUTION_SCALE, 4 * RESOLUTION_SCALE]); // Guiones más largos
+				ctx.strokeRect(
+					5 * RESOLUTION_SCALE,
+					5 * RESOLUTION_SCALE,
+					canvas.width - 10 * RESOLUTION_SCALE,
+					canvas.height - 10 * RESOLUTION_SCALE,
+				);
+
 				URL.revokeObjectURL(url);
+				// Exportamos como PNG de alta resolución
 				resolve(canvas.toDataURL("image/png"));
 			};
 			img.onerror = () => {
@@ -150,46 +181,39 @@ export default function BarcodeGenerator() {
 		}
 		setLoading(true);
 		setMsg("Generando documento Word...", "");
-		const { Document, Packer, Paragraph, TextRun, ImageRun } = window.docx;
+		const { Document, Packer, Paragraph, TextRun, ImageRun, AlignmentType } =
+			window.docx;
 		const texts = batchTexts.length ? batchTexts : [currentText];
 		const children = [];
 
 		for (let i = 0; i < texts.length; i++) {
 			const txt = texts[i];
-			children.push(
-				new Paragraph({
-					children: [
-						new TextRun({
-							text: txt,
-							bold: true,
-							size: 28,
-							font: "Courier New",
-						}),
-					],
-					spacing: { after: 160 },
-				}),
-			);
+
 			const dataUrl = await svgToPng(txt);
 			if (dataUrl) {
 				const base64 = dataUrl.split(",")[1];
 				const binary = atob(base64);
 				const bytes = new Uint8Array(binary.length);
 				for (let j = 0; j < binary.length; j++) bytes[j] = binary.charCodeAt(j);
+
 				children.push(
 					new Paragraph({
+						alignment: "center",
 						children: [
 							new ImageRun({
 								data: bytes,
-								transformation: { width: 400, height: 120 },
+								// 👇 Mantenemos el tamaño de VISUALIZACIÓN en Word similar
+								// Word escalará la imagen de alta resolución para que quepa aquí.
+								// Ajusté un poquito el alto (140->150) por el texto extra, prueba cómo queda.
+								transformation: { width: 300, height: 150 },
 								type: "png",
 							}),
 						],
-						spacing: { after: i < texts.length - 1 ? 560 : 160 },
+						spacing: { after: i < texts.length - 1 ? 500 : 160 },
 					}),
 				);
 			}
 		}
-
 		try {
 			const doc = new Document({
 				sections: [

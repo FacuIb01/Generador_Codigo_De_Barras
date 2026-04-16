@@ -71,19 +71,22 @@ export default function PrintPage() {
 				← Volver al Generador
 			</button>
 
-			<div className="space-y-10">
-				{texts.map((text, i) => (
-					<div
-						key={i}
-						className="break-inside-avoid border-b border-gray-100 pb-6"
-					>
-						<h2 className="text-xl font-bold mb-2 uppercase tracking-widest">
-							{text}
-						</h2>
-						<svg id={`bc-${i}`} className="max-w-full"></svg>
-					</div>
-				))}
-			</div>
+<div className="flex flex-col items-center space-y-10"> {/* Añadimos flex-col e items-center */}
+    {texts.map((text, i) => (
+        <div
+            key={i}
+            // Añadimos 'flex flex-col items-center text-center' para que el SVG y el H2 se centren
+            className="break-inside-avoid border-2 border-dashed border-slate-300 p-6 flex flex-col items-center text-center rounded-sm"
+        >
+            <h2 className="text-sm font-bold mb-2 uppercase tracking-widest text-slate-700">
+                {text}
+            </h2>
+            <div className="flex justify-center w-full">
+                <svg id={`bc-${i}`} className="max-w-full"></svg>
+            </div>
+        </div>
+    ))}
+</div>
 
 			<style
 				dangerouslySetInnerHTML={{
