@@ -5,9 +5,11 @@ import "./index.css";
 import PrintPage from "./components/PrintPage"
 import BarcodeGenerator from "./components/BarCodeGenerator.jsx";
 import Footer from "./components/Footer.jsx";
+import Header from "./components/Header.jsx";
 
 createRoot(document.getElementById("root")).render(
 		<BrowserRouter>
+		<Header	/>
 			<Routes>
 				<Route path="/" element={<BarcodeGenerator />} />
 				<Route path="/print" element={<PrintPage />} />
