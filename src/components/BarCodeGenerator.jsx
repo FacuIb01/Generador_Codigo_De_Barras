@@ -160,7 +160,7 @@ export default function BarcodeGenerator() {
 					5 * RESOLUTION_SCALE,
 					5 * RESOLUTION_SCALE,
 					canvas.width - 10 * RESOLUTION_SCALE,
-					canvas.height - 10 * RESOLUTION_SCALE,
+					canvas.height - 5 * RESOLUTION_SCALE,
 				);
 
 				URL.revokeObjectURL(url);
@@ -205,7 +205,7 @@ export default function BarcodeGenerator() {
 								// 👇 Mantenemos el tamaño de VISUALIZACIÓN en Word similar
 								// Word escalará la imagen de alta resolución para que quepa aquí.
 								// Ajusté un poquito el alto (140->150) por el texto extra, prueba cómo queda.
-								transformation: { width: 300, height: 150 },
+								transformation: { width: 300, height: 180 },
 								type: "png",
 							}),
 						],

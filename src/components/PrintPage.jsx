@@ -76,7 +76,7 @@ export default function PrintPage() {
         <div
             key={i}
             // Añadimos 'flex flex-col items-center text-center' para que el SVG y el H2 se centren
-            className="break-inside-avoid border-2 border-dashed border-slate-300 p-6 flex flex-col items-center text-center rounded-sm"
+            className="break-inside-avoid border-2 border-dashed border-slate-300 p-1 flex flex-col items-center text-center rounded-sm"
         >
             <h2 className="text-sm font-bold mb-2 uppercase tracking-widest text-slate-700">
                 {text}
