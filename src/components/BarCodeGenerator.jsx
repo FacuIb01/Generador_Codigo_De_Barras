@@ -292,7 +292,7 @@ export default function BarcodeGenerator() {
 							value={inputText}
 							onChange={(e) => setInputText(e.target.value)}
 							onKeyDown={(e) => e.key === "Enter" && generateBarcode()}
-							placeholder="Ej: holaquetal"
+							placeholder="Ej: th671023031"
 							className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm tracking-wider"
 						/>
 						<button
@@ -308,7 +308,7 @@ export default function BarcodeGenerator() {
 							value={batchText}
 							onChange={(e) => setBatchText(e.target.value)}
 							placeholder={
-								"holaquetal\nproducto002\notro-texto\n(uno por línea)"
+								"th671023001\nth671023031\nth671023132\n(uno por línea)"
 							}
 							rows={5}
 							className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-sm tracking-wider resize-none"
